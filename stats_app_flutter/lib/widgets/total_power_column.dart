@@ -1,4 +1,6 @@
 import 'package:flutter/material.dart';
+import 'package:pc_stats_monitor/widgets/ram_gauge.dart';
+import 'package:pc_stats_monitor/widgets/speed_gauge.dart';
 import '../constants/app_colors.dart';
 
 class TotalPowerColumn extends StatelessWidget {
@@ -6,6 +8,10 @@ class TotalPowerColumn extends StatelessWidget {
   final double ramUsage;
   final double ramUsedGb;
   final double ramTotalGb;
+  final double? cpuVcore;
+  final double? cpuFanSpeed;
+  final double? cpuOptFanSpeed;
+  final Color accentColor = AppColors.powerAccent;
 
   const TotalPowerColumn({
     super.key,
@@ -13,12 +19,15 @@ class TotalPowerColumn extends StatelessWidget {
     required this.ramUsage,
     required this.ramUsedGb,
     required this.ramTotalGb,
+    this.cpuVcore,
+    this.cpuFanSpeed,
+    this.cpuOptFanSpeed,
   });
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 18),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
       decoration: BoxDecoration(
         color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(22),
@@ -28,15 +37,6 @@ class TotalPowerColumn extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          const Text(
-            'TOTAL WATT',
-            style: TextStyle(
-              color: AppColors.powerAccent,
-              fontSize: 16,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 2,
-            ),
-          ),
           Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -44,7 +44,7 @@ class TotalPowerColumn extends StatelessWidget {
                 totalWatt.toStringAsFixed(0),
                 style: TextStyle(
                   color: Colors.white,
-                  fontSize: 48,
+                  fontSize: 24,
                   fontWeight: FontWeight.w800,
                   shadows: [
                     Shadow(
@@ -55,7 +55,7 @@ class TotalPowerColumn extends StatelessWidget {
                 ),
               ),
               const Text(
-                'WATT',
+                'TOTAL WATT',
                 style: TextStyle(
                   color: Colors.white38,
                   fontSize: 11,
@@ -65,51 +65,45 @@ class TotalPowerColumn extends StatelessWidget {
               ),
             ],
           ),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
+          const Spacer(
+            flex: 1,
+          ),
+          Expanded(
+              flex: 20,
+              child: RamGauge(
+                ramUsage: ramUsage,
+                ramUsedGb: ramUsedGb,
+                ramTotalGb: ramTotalGb,
+                color: AppColors.ramAccent,
+              )),
+          Expanded(
+            flex: 14,
+            child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
-                    'RAM',
-                    style: TextStyle(
-                      color: Colors.white38,
-                      fontSize: 11,
-                      fontWeight: FontWeight.w700,
-                      letterSpacing: 2,
+                  //  if (cpuVcore != null)
+                  //  MiniDetail(
+                  //      icon: Icons.electric_bolt,
+                  //      value: 'Vcore ${(cpuVcore!).toStringAsFixed(1)} V',
+                  //      color: accentColor),
+                  //      if (cpuFanSpeed != null)
+                  if (cpuVcore != null)
+                    // MiniDetail(
+                    //     icon: Icons.electric_bolt,
+                    //     value: 'Vcore ${(cpuVcore!).toStringAsFixed(1)} V',
+                    //     color: accentColor),
+                    //     if (cpuFanSpeed != null)
+                    SpeedGauge(
+                      rpmValue: cpuFanSpeed!,
+                      maxRpm: 2200,
+                      color: accentColor,
                     ),
+                  SpeedGauge(
+                    rpmValue: cpuOptFanSpeed!,
+                    maxRpm: 2200,
+                    color: accentColor,
                   ),
-                  Text(
-                    '${ramUsage.toStringAsFixed(0)}%',
-                    style: const TextStyle(
-                      color: AppColors.ramAccent,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                  Text(
-                    '${ramUsedGb.toStringAsFixed(1)} GB / ${ramTotalGb.toStringAsFixed(1)} GB',
-                    style: const TextStyle(
-                      color: AppColors.ramAccent,
-                      fontSize: 12,
-                      fontWeight: FontWeight.w700,
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 6),
-              ClipRRect(
-                borderRadius: BorderRadius.circular(6),
-                child: LinearProgressIndicator(
-                  value: (ramUsage / 100).clamp(0.0, 1.0),
-                  minHeight: 10,
-                  backgroundColor: AppColors.trackBackground,
-                  valueColor:
-                      const AlwaysStoppedAnimation<Color>(AppColors.ramAccent),
-                ),
-              ),
-            ],
+                ]),
           ),
         ],
       ),

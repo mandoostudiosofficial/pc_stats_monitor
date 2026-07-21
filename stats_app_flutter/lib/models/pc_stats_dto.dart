@@ -3,6 +3,9 @@ class PcStatsDto {
   final double cpuTemp;
   final double cpuClock;
   final double cpuWatt;
+  final double cpuVcore;
+  final double cpuFanSpeed;
+  final double cpuOptFanSpeed;
   final double gpuLoad;
   final double gpuTemp;
   final double gpuClock;
@@ -18,6 +21,9 @@ class PcStatsDto {
     this.cpuTemp = 0,
     this.cpuClock = 0,
     this.cpuWatt = 0,
+    this.cpuVcore = 0,
+    this.cpuFanSpeed = 0,
+    this.cpuOptFanSpeed = 0,
     this.gpuLoad = 0,
     this.gpuTemp = 0,
     this.gpuClock = 0,
@@ -35,6 +41,9 @@ class PcStatsDto {
       cpuTemp: _toDouble(json['CpuTemp']),
       cpuClock: _toDouble(json['CpuClock']),
       cpuWatt: _toDouble(json['CpuWatt']),
+      cpuVcore: _toDouble(json['CpuVcore']),
+      cpuFanSpeed: _toDouble(json['CpuFanRpm']),
+      cpuOptFanSpeed: _toDouble(json['CpuOptFanRpm']),
       gpuLoad: _toDouble(json['GpuLoad']),
       gpuTemp: _toDouble(json['GpuTemp']),
       gpuClock: _toDouble(json['GpuClock']),

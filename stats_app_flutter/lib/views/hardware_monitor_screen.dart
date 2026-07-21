@@ -62,6 +62,7 @@ class _HardwareMonitorScreenState extends State<HardwareMonitorScreen>
                         Expanded(
                           child: CoreCard(
                             title: 'CPU',
+                            cpuVcore: stats.cpuVcore,
                             accentColor: AppColors.cpuAccent,
                             loadValue: stats.cpuLoad,
                             tempValue: stats.cpuTemp,
@@ -72,6 +73,9 @@ class _HardwareMonitorScreenState extends State<HardwareMonitorScreen>
                         const SizedBox(width: 14),
                         Expanded(
                           child: TotalPowerColumn(
+                            cpuVcore: stats.cpuVcore,
+                            cpuFanSpeed: stats.cpuFanSpeed,
+                            cpuOptFanSpeed: stats.cpuOptFanSpeed,
                             totalWatt: stats.totalWatt,
                             ramUsage: stats.ramUsage,
                             ramUsedGb: stats.ramUsedGb,

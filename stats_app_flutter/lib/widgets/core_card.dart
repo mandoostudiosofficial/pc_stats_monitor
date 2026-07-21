@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:pc_stats_monitor/widgets/mini_details.dart';
 import '../constants/app_colors.dart';
 import 'load_gauge.dart';
 
@@ -10,6 +11,7 @@ class CoreCard extends StatelessWidget {
   final double clockValue;
   final double wattValue;
   final double? vramValue;
+  final double? cpuVcore;
 
   const CoreCard({
     super.key,
@@ -20,6 +22,7 @@ class CoreCard extends StatelessWidget {
     required this.clockValue,
     required this.wattValue,
     this.vramValue,
+    this.cpuVcore,
   });
 
   @override
@@ -53,51 +56,31 @@ class CoreCard extends StatelessWidget {
               ),
             ),
           ),
+          if (cpuVcore != null)
+            MiniDetail(
+                icon: Icons.electric_bolt,
+                value: '${cpuVcore!.toStringAsFixed(3)} V',
+                color: accentColor),
+          if (vramValue != null)
+            MiniDetail(
+                icon: Icons.memory,
+                value: 'VRAM ${(vramValue! / 1024).toStringAsFixed(1)} GB',
+                color: accentColor),
           Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: [
-              _MiniDetail(
+              MiniDetail(
                   icon: Icons.speed,
                   value: '${clockValue.toStringAsFixed(0)} MHz',
                   color: accentColor),
-              _MiniDetail(
+              MiniDetail(
                   icon: Icons.bolt,
                   value: '${wattValue.toStringAsFixed(0)} W',
                   color: accentColor),
-              if (vramValue != null)
-                _MiniDetail(
-                    icon: Icons.memory,
-                    value: 'VRAM ${(vramValue! / 1024).toStringAsFixed(1)} GB',
-                    color: accentColor),
             ],
           ),
         ],
       ),
-    );
-  }
-}
-
-class _MiniDetail extends StatelessWidget {
-  final IconData icon;
-  final String value;
-  final Color color;
-
-  const _MiniDetail(
-      {required this.icon, required this.value, required this.color});
-
-  @override
-  Widget build(BuildContext context) {
-    return Row(
-      mainAxisSize: MainAxisSize.min,
-      children: [
-        Icon(icon, size: 14, color: color.withValues(alpha: 0.85)),
-        const SizedBox(width: 6),
-        Text(
-          value,
-          style: const TextStyle(
-              color: Colors.white70, fontSize: 12, fontWeight: FontWeight.w600),
-        ),
-      ],
     );
   }
 }
