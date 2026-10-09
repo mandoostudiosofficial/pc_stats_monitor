@@ -44,8 +44,33 @@ class CoreCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final fans = <Widget>[
+      if (gpuFan1Percentage != null && gpuFan1Rpm != null)
+        Expanded(
+          child: SpeedGauge(
+            rpmPercentage: gpuFan1Percentage,
+            rpmValue: gpuFan1Rpm!,
+            maxRpm: 2200,
+            color: accentColor,
+          ),
+        ),
+      if (gpuFan2Percentage != null && gpuFan2Rpm != null)
+        Expanded(
+          child: SpeedGauge(
+            rpmPercentage: gpuFan2Percentage,
+            rpmValue: gpuFan2Rpm!,
+            maxRpm: 2200,
+            color: accentColor,
+          ),
+        ),
+    ];
+
+    final hasVrmRow =
+        vrmMosTemp != null || vrmSocTemp != null || cpuVcore != null;
+    final hasTempRow = gpuGpuJuctionTemp != null || gpuHotSpotTemp != null;
+
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 18),
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 8),
       decoration: BoxDecoration(
         color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(22),
@@ -53,115 +78,99 @@ class CoreCard extends StatelessWidget {
             Border.all(color: accentColor.withValues(alpha: 0.25), width: 1),
       ),
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.spaceBetween,
+        spacing: 4,
         children: [
-          Text(
-            title,
-            style: TextStyle(
-              color: accentColor,
-              fontSize: 18,
-              fontWeight: FontWeight.w900,
-              letterSpacing: 3,
-            ),
-          ),
-          Expanded(
-            child: Center(
-              child: LoadGauge(
-                loadValue: loadValue,
-                tempValue: tempValue,
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              title,
+              style: TextStyle(
                 color: accentColor,
+                fontSize: 16,
+                fontWeight: FontWeight.w900,
+                letterSpacing: 3,
               ),
             ),
           ),
-          FittedBox(
-            fit: BoxFit.contain,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (vrmMosTemp != null)
-                  MiniDetail(
-                      label: 'VRM',
-                      value: '${vrmMosTemp!.toStringAsFixed(0)}°C',
-                      color: accentColor),
-                if (vrmSocTemp != null)
-                  MiniDetail(
-                      label: 'SOC',
-                      value: '${vrmSocTemp!.toStringAsFixed(0)}°C',
-                      color: accentColor),
-                if (cpuVcore != null)
-                  MiniDetail(
-                      icon: Icons.electric_bolt,
-                      value: '${cpuVcore!.toStringAsFixed(3)}V',
-                      color: accentColor),
-              ],
+          Expanded(
+            flex: 3,
+            child: LoadGauge(
+              loadValue: loadValue,
+              tempValue: tempValue,
+              color: accentColor,
             ),
           ),
-          FittedBox(
-              fit: BoxFit.contain,
-              child: Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    if (gpuFan1Percentage != null && gpuFan1Rpm != null)
-                      SizedBox(
-                        height: 75,
-                        child: SpeedGauge(
-                          rpmPercentage: gpuFan1Percentage,
-                          rpmValue: gpuFan1Rpm!,
-                          maxRpm: 2200,
-                          color: accentColor,
-                        ),
-                      ),
-                    const SizedBox(width: 2),
-                    if (gpuFan2Percentage != null && gpuFan2Rpm != null)
-                      SizedBox(
-                        height: 75,
-                        child: SpeedGauge(
-                          rpmPercentage: gpuFan2Percentage,
-                          rpmValue: gpuFan2Rpm!,
-                          maxRpm: 2200,
-                          color: accentColor,
-                        ),
-                      ),
-                  ])),
-          FittedBox(
-            fit: BoxFit.contain,
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                if (gpuGpuJuctionTemp != null)
-                  MiniDetail(
-                      label: 'Junc',
-                      value: '${gpuGpuJuctionTemp!.toStringAsFixed(0)}°C',
-                      color: accentColor),
-                if (gpuHotSpotTemp != null)
-                  MiniDetail(
-                      label: 'HotS.',
-                      value: '${gpuHotSpotTemp!.toStringAsFixed(0)}°C',
-                      color: accentColor),
-              ],
+          if (hasVrmRow)
+            _MiniRow(children: [
+              if (vrmMosTemp != null)
+                MiniDetail(
+                    label: 'VRM',
+                    value: '${vrmMosTemp!.toStringAsFixed(0)}°C',
+                    color: accentColor),
+              if (vrmSocTemp != null)
+                MiniDetail(
+                    label: 'SOC',
+                    value: '${vrmSocTemp!.toStringAsFixed(0)}°C',
+                    color: accentColor),
+              if (cpuVcore != null)
+                MiniDetail(
+                    icon: Icons.electric_bolt,
+                    value: '${cpuVcore!.toStringAsFixed(3)}V',
+                    color: accentColor),
+            ]),
+          if (fans.isNotEmpty)
+            Expanded(
+              flex: 2,
+              child: Row(spacing: 4, children: fans),
             ),
-          ),
+          if (hasTempRow)
+            _MiniRow(children: [
+              if (gpuGpuJuctionTemp != null)
+                MiniDetail(
+                    label: 'Junc',
+                    value: '${gpuGpuJuctionTemp!.toStringAsFixed(0)}°C',
+                    color: accentColor),
+              if (gpuHotSpotTemp != null)
+                MiniDetail(
+                    label: 'HotS.',
+                    value: '${gpuHotSpotTemp!.toStringAsFixed(0)}°C',
+                    color: accentColor),
+            ]),
           if (vramValue != null)
+            _MiniRow(children: [
+              MiniDetail(
+                  icon: Icons.memory,
+                  value: 'VRAM ${(vramValue! / 1024).toStringAsFixed(1)} GB',
+                  color: accentColor),
+            ]),
+          _MiniRow(children: [
             MiniDetail(
-                icon: Icons.memory,
-                value: 'VRAM ${(vramValue! / 1024).toStringAsFixed(1)} GB',
+                icon: Icons.speed,
+                value: '${clockValue.toStringAsFixed(0)} MHz',
                 color: accentColor),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceEvenly,
-            children: [
-              MiniDetail(
-                  icon: Icons.speed,
-                  value: '${clockValue.toStringAsFixed(0)} MHz',
-                  color: accentColor),
-              MiniDetail(
-                  icon: Icons.bolt,
-                  value: '${wattValue.toStringAsFixed(0)} W',
-                  color: accentColor),
-            ],
-          ),
+            MiniDetail(
+                icon: Icons.bolt,
+                value: '${wattValue.toStringAsFixed(0)} W',
+                color: accentColor),
+          ]),
         ],
+      ),
+    );
+  }
+}
+
+class _MiniRow extends StatelessWidget {
+  final List<Widget> children;
+  const _MiniRow({required this.children});
+
+  @override
+  Widget build(BuildContext context) {
+    return FittedBox(
+      fit: BoxFit.scaleDown,
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        spacing: 10,
+        children: children,
       ),
     );
   }

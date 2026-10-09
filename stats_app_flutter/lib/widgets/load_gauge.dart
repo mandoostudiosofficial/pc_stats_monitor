@@ -1,6 +1,7 @@
-import 'dart:math' show pi;
+import 'dart:math';
+
 import 'package:flutter/material.dart';
-import '../constants/app_colors.dart';
+import 'package:pc_stats_monitor/constants/app_colors.dart';
 
 class LoadGauge extends StatelessWidget {
   final double loadValue;
@@ -14,32 +15,29 @@ class LoadGauge extends StatelessWidget {
     required this.color,
   });
 
+  static const double _baseSize = 200;
+
   @override
   Widget build(BuildContext context) {
     final fraction = (loadValue / 100).clamp(0.0, 1.0);
 
-    return LayoutBuilder(
-      builder: (context, constraints) {
-        final maxH = constraints.maxHeight.isFinite
-            ? constraints.maxHeight
-            : constraints.maxWidth;
-        final dim = constraints.maxWidth < maxH ? constraints.maxWidth : maxH;
-        final size = dim.clamp(120.0, 200.0);
-
-        return TweenAnimationBuilder<double>(
+    return Center(
+      child: FittedBox(
+        fit: BoxFit.contain,
+        child: TweenAnimationBuilder<double>(
           tween: Tween<double>(begin: 0, end: fraction),
           duration: const Duration(milliseconds: 600),
           curve: Curves.easeOutCubic,
           builder: (context, animatedFraction, child) {
             return SizedBox(
-              width: size,
-              height: size,
+              width: _baseSize,
+              height: _baseSize,
               child: Stack(
                 alignment: Alignment.center,
                 children: [
                   Container(
-                    width: size,
-                    height: size,
+                    width: _baseSize,
+                    height: _baseSize,
                     decoration: BoxDecoration(
                       shape: BoxShape.circle,
                       boxShadow: [
@@ -52,12 +50,12 @@ class LoadGauge extends StatelessWidget {
                     ),
                   ),
                   CustomPaint(
-                    size: Size(size, size),
+                    size: const Size(_baseSize, _baseSize),
                     painter: _ArcGaugePainter(
                       fraction: animatedFraction,
                       color: color,
                       trackColor: AppColors.trackBackground,
-                      strokeWidth: size * 0.10,
+                      strokeWidth: _baseSize * 0.10,
                       sweepDegrees: 270,
                     ),
                   ),
@@ -66,27 +64,27 @@ class LoadGauge extends StatelessWidget {
                     children: [
                       Text(
                         '${loadValue.toStringAsFixed(0)}%',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
-                          fontSize: size * 0.20,
+                          fontSize: _baseSize * 0.20,
                           fontWeight: FontWeight.w800,
                         ),
                       ),
-                      Text(
+                      const Text(
                         'LOAD',
                         style: TextStyle(
                           color: Colors.white38,
                           fontWeight: FontWeight.w600,
-                          fontSize: size * 0.06,
+                          fontSize: _baseSize * 0.06,
                           letterSpacing: 1.5,
                         ),
                       ),
-                      SizedBox(height: size * 0.045),
+                      const SizedBox(height: _baseSize * 0.045),
                       Text(
                         '${tempValue.toStringAsFixed(0)}°',
                         style: TextStyle(
                           color: color,
-                          fontSize: size * 0.135,
+                          fontSize: _baseSize * 0.135,
                           fontWeight: FontWeight.w700,
                         ),
                       ),
@@ -96,8 +94,8 @@ class LoadGauge extends StatelessWidget {
               ),
             );
           },
-        );
-      },
+        ),
+      ),
     );
   }
 }
