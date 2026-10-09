@@ -5,6 +5,7 @@ import '../constants/app_colors.dart';
 class SpeedGauge extends StatelessWidget {
   final double rpmValue;
   final double maxRpm;
+  final double? rpmPercentage;
   final Color color;
 
   const SpeedGauge({
@@ -12,14 +13,18 @@ class SpeedGauge extends StatelessWidget {
     required this.rpmValue,
     required this.color,
     this.maxRpm = 2000,
+    this.rpmPercentage,
   });
 
   static const double _baseSize = 200;
 
   @override
   Widget build(BuildContext context) {
-    final percent = (rpmValue / maxRpm * 100).clamp(0.0, 100.0);
-    final fraction = (rpmValue / maxRpm).clamp(0.0, 1.0);
+    final percent =
+        rpmPercentage ?? (rpmValue / maxRpm * 100).clamp(0.0, 100.0);
+    final fraction = rpmPercentage != null
+        ? (rpmPercentage! / 100).clamp(0.0, 1.0)
+        : (rpmValue / maxRpm).clamp(0.0, 1.0);
 
     return Center(
       child: FittedBox(
@@ -64,13 +69,13 @@ class SpeedGauge extends StatelessWidget {
                     children: [
                       Text(
                         '${percent.toStringAsFixed(0)}%',
-                        style: TextStyle(
+                        style: const TextStyle(
                           color: Colors.white,
                           fontSize: _baseSize * 0.20,
                           fontWeight: FontWeight.w800,
                         ),
                       ),
-                      Text(
+                      const Text(
                         'FAN',
                         style: TextStyle(
                           color: Colors.white38,
@@ -79,7 +84,7 @@ class SpeedGauge extends StatelessWidget {
                           letterSpacing: 1.5,
                         ),
                       ),
-                      SizedBox(height: _baseSize * 0.045),
+                      const SizedBox(height: _baseSize * 0.045),
                       Text(
                         '${rpmValue.toStringAsFixed(0)} RPM',
                         style: TextStyle(

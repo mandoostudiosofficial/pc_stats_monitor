@@ -11,6 +11,7 @@ class TotalPowerColumn extends StatelessWidget {
   final double? cpuVcore;
   final double? cpuFanSpeed;
   final double? cpuOptFanSpeed;
+  final double? cpuPumpFanSpeed;
   final Color accentColor = AppColors.powerAccent;
 
   const TotalPowerColumn({
@@ -19,6 +20,7 @@ class TotalPowerColumn extends StatelessWidget {
     required this.ramUsage,
     required this.ramUsedGb,
     required this.ramTotalGb,
+    this.cpuPumpFanSpeed,
     this.cpuVcore,
     this.cpuFanSpeed,
     this.cpuOptFanSpeed,
@@ -27,7 +29,7 @@ class TotalPowerColumn extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 12),
       decoration: BoxDecoration(
         color: AppColors.cardBackground,
         borderRadius: BorderRadius.circular(22),
@@ -81,27 +83,28 @@ class TotalPowerColumn extends StatelessWidget {
             child: Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  //  if (cpuVcore != null)
-                  //  MiniDetail(
-                  //      icon: Icons.electric_bolt,
-                  //      value: 'Vcore ${(cpuVcore!).toStringAsFixed(1)} V',
-                  //      color: accentColor),
-                  //      if (cpuFanSpeed != null)
-                  if (cpuVcore != null)
-                    // MiniDetail(
-                    //     icon: Icons.electric_bolt,
-                    //     value: 'Vcore ${(cpuVcore!).toStringAsFixed(1)} V',
-                    //     color: accentColor),
-                    //     if (cpuFanSpeed != null)
-                    SpeedGauge(
+                  Expanded(
+                    child: SpeedGauge(
                       rpmValue: cpuFanSpeed!,
                       maxRpm: 2200,
                       color: accentColor,
                     ),
-                  SpeedGauge(
-                    rpmValue: cpuOptFanSpeed!,
-                    maxRpm: 2200,
-                    color: accentColor,
+                  ),
+                  const SizedBox(width: 2),
+                  Expanded(
+                    child: SpeedGauge(
+                      rpmValue: cpuPumpFanSpeed!,
+                      maxRpm: 4500,
+                      color: accentColor,
+                    ),
+                  ),
+                  const SizedBox(width: 2),
+                  Expanded(
+                    child: SpeedGauge(
+                      rpmValue: cpuOptFanSpeed!,
+                      maxRpm: 2200,
+                      color: accentColor,
+                    ),
                   ),
                 ]),
           ),
